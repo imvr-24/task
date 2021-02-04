@@ -3,13 +3,13 @@ import React from "react";
 import Select from "react-select";
 
 export const TimeZoneComponent = ({ timezone, tz, ctz, handleChange }) => {
-  
+
   const tmp = [...tz];
-  
+
   timezone.forEach((prop) => {
     tmp.push({ value: prop, label: prop });
   });
-  
+
   return (
     <div className="container-lt">
       <div className="row ml-4">

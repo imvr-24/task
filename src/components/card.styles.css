@@ -1,10 +1,9 @@
 .card-container {
-  width: 25vw;
+  width: 20 vw;
   padding: 5px 35px;
   margin: 25px 40px;
-  background-color: #95dada;
+  background-color: #b1f1f1;
   border: 1px solid grey;
   border-radius: 5px;
   cursor: pointer;
 }
-

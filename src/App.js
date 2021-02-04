@@ -1,11 +1,8 @@
 import React, { Component } from "react";
 
 import timezone from "./timezone.json";
-import { TZComponent } from './components/tz.component.jsx';
+import { TimeZoneComponent } from './components/timezone.component.jsx';
 import { Card } from './components/card.component.jsx'
-import { Cards } from './components/cards.component.jsx'
-import { Route } from "react-router-dom";
-
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -23,7 +20,8 @@ export class App extends Component {
       currentZone: '',
       currentDT: '',
       selectedZone: '',
-      selectedDT: ''
+      selectedDT: '',
+      initialDisplay: false
     };
   }
 
@@ -35,7 +33,8 @@ export class App extends Component {
           ;
           this.setState({
             currentZone: result.zoneName,
-            currentDT: result.formatted
+            currentDT: result.formatted,
+            initialDisplay: true
           }, () => console.log('Done'));
         }
       );
@@ -74,10 +73,10 @@ export class App extends Component {
   render() {
     return (
       <div className='container ct'>
-        <TZComponent timezone={Object.keys(timezone)} tz={tz} ctz={ctz} handleChange={this.handleChange} />
+        <TimeZoneComponent timezone={Object.keys(timezone)} tz={tz} ctz={ctz} handleChange={this.handleChange} />
         <div className='row'>
           <div className='col-md-4'>
-            <Card inps={this.state} />
+            {this.state.initialDisplay ? <Card inps={this.state} /> : null}
           </div>
 
           {
@@ -91,7 +90,6 @@ export class App extends Component {
             ) : null
           }
         </div>
-        <Route exact path='/cards' component={Cards}></Route>
       </div>
 
     );
