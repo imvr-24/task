@@ -1,25 +1,103 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import timezone from "./timezone.json";
+import { TZComponent } from './components/tz.component.jsx';
+import {Card} from './components/card.component.jsx'
+import {Cards} from './components/cards.component.jsx'
+import { Route } from "react-router-dom";
+
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+let ctz = [{
+  value: 'Asia/Kolkata',
+  label: 'Asia/Kolkata'
+}]
+let tz = []
+
+export class App extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      currentZone: '',
+      currentDT: '',
+      selectedZone: '',
+      selectedDT: ''
+    };
+  }
+
+  componentDidMount() {
+    fetch("https://api.timezonedb.com/v2.1/get-time-zone?key=SC4W3H2GK55S&format=json&by=zone&zone=Asia/Kolkata")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          console.log(result);
+          this.setState({
+            currentZone: result.zoneName,
+            currentDT: result.formatted
+          }, () => console.log('Done'));
+        }
+      );
+  }
+
+  convertTimeZone = (zone) => {
+    fetch(`https://api.timezonedb.com/v2.1/list-time-zone?key=SC4W3H2GK55S&format=json&zone=${zone.value}`)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          console.log(result);
+          console.log(result.zones[0]);
+          const { zoneName, timestamp } = result.zones[0]; 
+          const dt = this.convertToFormttedDate(timestamp);
+          this.setState({
+            selectedDT: dt,
+            selectedZone: zoneName
+          }, () => console.log('Convert to  Time Zone'));
+        }
+      )
+  };
+
+  convertToFormttedDate = (timestamp) => {
+
+    const milliseconds = timestamp * 1000;
+    const dateObject = new Date(milliseconds);
+    const dateFormat = dateObject.toLocaleString();
+
+    return dateFormat;
+  };
+
+  handleChange = selectedZone => {
+    this.setState({selectedZone: selectedZone.label});
+    this.convertTimeZone(selectedZone)
+    console.log(`Option selected:`, selectedZone);
+  };
+
+  render() {
+    return (
+      <div className='container ct'>
+        <TZComponent timezone={Object.keys(timezone)} tz={tz} ctz={ctz} handleChange={this.handleChange}/>
+        <div className='row'>
+        <div className='col-md-4'>
+          <Card inps={this.state}/>
+        </div>
+       
+        {
+          this.state.selectedDT ? (
+            <div className='col-md-4'>
+            <div className='card-container'>
+                <h2> {this.state.selectedZone} </h2>
+                <p> {this.state.selectedDT} </p>
+            </div>
+          </div>
+          ): null
+        }
+        </div>
+        <Route exact path='/cards' component={Cards}></Route>
+      </div>
+
+    );
+  }
 }
 
 export default App;
