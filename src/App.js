@@ -15,7 +15,7 @@ let tz = []
 export class App extends Component {
   constructor() {
     super();
-
+    
     this.state = {
       currentZone: '',
       currentDT: '',
@@ -23,24 +23,44 @@ export class App extends Component {
       selectedDT: '',
       initialDisplay: false
     };
+    
   }
 
+  zoneInterval = 0;
+  selectedZoneInterval = 0;
+
   componentDidMount() {
+    this.zoneInterval = setInterval(() => {
+      this.fetchZone();
+    }, 5000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.zoneInterval);
+    clearInterval(this.selectedZoneInterval);
+  }
+
+  fetchZone = () => {
     fetch("https://api.timezonedb.com/v2.1/get-time-zone?key=SC4W3H2GK55S&format=json&by=zone&zone=Asia/Kolkata")
       .then(res => res.json())
       .then(
         (result) => {
-          ;
           this.setState({
             currentZone: result.zoneName,
             currentDT: result.formatted,
             initialDisplay: true
-          }, () => console.log('Done'));
+          });
         }
       );
   }
 
   convertTimeZone = (zone) => {
+    this.selectedZoneInterval = setInterval(() => {
+      this.fetchSelectedTimeZone(zone);
+    }, 4000);
+  };
+
+  fetchSelectedTimeZone = (zone) => {
     fetch(`https://api.timezonedb.com/v2.1/list-time-zone?key=SC4W3H2GK55S&format=json&zone=${zone.value}`)
       .then(res => res.json())
       .then(
@@ -50,7 +70,7 @@ export class App extends Component {
           this.setState({
             selectedDT: dt,
             selectedZone: zoneName
-          }, () => console.log('Convert to  Time Zone'));
+          });
         }
       )
   };
@@ -66,8 +86,7 @@ export class App extends Component {
 
   handleChange = selectedZone => {
     this.setState({ selectedZone: selectedZone.label });
-    this.convertTimeZone(selectedZone)
-    console.log(`Option selected:`, selectedZone);
+    this.convertTimeZone(selectedZone);
   };
 
   render() {
