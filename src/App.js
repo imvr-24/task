@@ -2,8 +2,8 @@ import React, { Component } from "react";
 
 import timezone from "./timezone.json";
 import { TZComponent } from './components/tz.component.jsx';
-import {Card} from './components/card.component.jsx'
-import {Cards} from './components/cards.component.jsx'
+import { Card } from './components/card.component.jsx'
+import { Cards } from './components/cards.component.jsx'
 import { Route } from "react-router-dom";
 
 
@@ -32,7 +32,7 @@ export class App extends Component {
       .then(res => res.json())
       .then(
         (result) => {
-          console.log(result);
+          ;
           this.setState({
             currentZone: result.zoneName,
             currentDT: result.formatted
@@ -46,9 +46,7 @@ export class App extends Component {
       .then(res => res.json())
       .then(
         (result) => {
-          console.log(result);
-          console.log(result.zones[0]);
-          const { zoneName, timestamp } = result.zones[0]; 
+          const { zoneName, timestamp } = result.zones[0];
           const dt = this.convertToFormttedDate(timestamp);
           this.setState({
             selectedDT: dt,
@@ -68,7 +66,7 @@ export class App extends Component {
   };
 
   handleChange = selectedZone => {
-    this.setState({selectedZone: selectedZone.label});
+    this.setState({ selectedZone: selectedZone.label });
     this.convertTimeZone(selectedZone)
     console.log(`Option selected:`, selectedZone);
   };
@@ -76,22 +74,22 @@ export class App extends Component {
   render() {
     return (
       <div className='container ct'>
-        <TZComponent timezone={Object.keys(timezone)} tz={tz} ctz={ctz} handleChange={this.handleChange}/>
+        <TZComponent timezone={Object.keys(timezone)} tz={tz} ctz={ctz} handleChange={this.handleChange} />
         <div className='row'>
-        <div className='col-md-4'>
-          <Card inps={this.state}/>
-        </div>
-       
-        {
-          this.state.selectedDT ? (
-            <div className='col-md-4'>
-            <div className='card-container'>
-                <h2> {this.state.selectedZone} </h2>
-                <p> {this.state.selectedDT} </p>
-            </div>
+          <div className='col-md-4'>
+            <Card inps={this.state} />
           </div>
-          ): null
-        }
+
+          {
+            this.state.selectedDT ? (
+              <div className='col-md-4'>
+                <div className='card-container'>
+                  <h2> {this.state.selectedZone} </h2>
+                  <p> {this.state.selectedDT} </p>
+                </div>
+              </div>
+            ) : null
+          }
         </div>
         <Route exact path='/cards' component={Cards}></Route>
       </div>
